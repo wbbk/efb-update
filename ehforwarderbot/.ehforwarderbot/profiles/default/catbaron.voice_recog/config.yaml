@@ -1,0 +1,7 @@
+speech_api:
+    tencent:
+        secret_id: SECRET_ID
+        secret_key: SECRET_KEY
+        # supported language: en, zh
+        lang: zh
+auto: true

@@ -1,0 +1,13 @@
+version: "3.3"
+
+services:
+  pandora:
+    image: jiz4oh/efb
+    container_name: efb
+    volumes:
+      - /root/ehforwarderbot:/data
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: 1m

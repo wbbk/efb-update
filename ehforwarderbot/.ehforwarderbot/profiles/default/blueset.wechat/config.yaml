@@ -1,0 +1,9 @@
+flags:
+    # tg 端编辑消息时以撤回并重新发送的方式发送到微信
+    delete_on_edit: true
+    # 每当请求会话列表时，强制刷新会话列表
+    refresh_friends: true
+    # 使用 iTerm2 图像协议 显示二维码。本功能只适用于 iTerm2 用户
+    imgcat_qr: true
+    # 在收到第三方合作应用分享给微信的链接时，其附带的预览图将缩略图上传到 sm.ms
+    app_shared_link_mode: upload
