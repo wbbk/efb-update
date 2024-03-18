@@ -7,3 +7,5 @@ flags:
     imgcat_qr: true
     # 在收到第三方合作应用分享给微信的链接时，其附带的预览图将缩略图上传到 sm.ms
     app_shared_link_mode: upload
+    # 以 JPEG 图片方式发送自定义表情和 GIF，用于临时绕过微信网页版的自定义表情限制
+    send_stickers_and_gif_as_jpeg: false

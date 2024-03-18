@@ -1,0 +1,19 @@
+version: '3'
+
+x-common: &default
+  restart: unless-stopped
+  logging:
+    driver: json-file
+    options:
+      max-size: '10m'
+  environment: &default-environment
+    TZ: Asia/Shanghai
+
+services:
+  efb-wechat:
+    <<: *default
+    container_name: efb-wechat
+    image: example/efb-wechat
+    network_mode: bridge
+    volumes:
+      - ./profiles:/data/profiles

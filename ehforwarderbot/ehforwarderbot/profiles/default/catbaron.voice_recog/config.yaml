@@ -1,7 +1,0 @@
-speech_api:
-    tencent:
-        secret_id: AKIDfTUfxDb65DV7z4WvWdtO7siXQXmBkN8s
-        secret_key: 4ZzZKxXDqTSe1JbqOrzMpJoBUxSvU7jE
-        # supported language: en, zh
-        lang: zh
-auto: true
