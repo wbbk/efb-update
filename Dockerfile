@@ -12,7 +12,7 @@ RUN apk add --no-cache ffmpeg libmagic tiff openjpeg cairo \
   cp /usr/share/zoneinfo/${TZ} /etc/localtime && \
   apk del tzdata
 RUN apk add --no-cache --virtual .build-deps git build-base && \
-  pip install --root-user-action=ignore pysocks ehforwarderbot efb-telegram-master && \
+  pip install --root-user-action=ignore pysocks ehforwarderbot efb-telegram-master lottie && \
   pip install --root-user-action=ignore git+https://github.com/ehForwarderBot/efb-wechat-slave.git && \
   apk del .build-deps && \
   rm -rf /var/cache/apk/*
