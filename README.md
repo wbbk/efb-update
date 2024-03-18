@@ -2,90 +2,88 @@
 
 ## 安装
 
-```console
-git clone https://github.com/jiz4oh/ehforwarderbot ehforwarderbot
+```shell
+git clone https://github.com/wbbk/efb-update efb-update
 ```
 
 ## 配置
 
-1.  主配置文件`ehforwarderbot/profiles/default/blueset.telegram/config.yaml`
-   1. telgram提供的bot `token`
-   2. telgram提供的elgram id `admins`
+1.  主配置文件 `efb-update/profiles/default/blueset.telegram/config.yaml`
+    1. telgram 提供的 bot `token`
+    2. telgram 提供的 telgram id `admins`
 
-2.  （可选）插件控制配置文件`ehforwarderbot/profiles/default/config.yaml`
+2.  （可选）插件控制配置文件`efb-update/profiles/default/config.yaml`
+    1. 新增插件 catbaron.voice_recog，实现语音转文字；
+    2. 新增插件 patch.PatchMiddleware，实现标记微信已读
 
-   1. 新增插件catbaron.voice_recog，实现语音转文字；
-   2. 新增插件patch.PatchMiddleware，实现标记微信已读
+3. 插件 `catbaron.voice_recog` 配置文件 `ehforwarderbot/profiles/default/catbaron.voice_recog/config.yaml`
 
-3. 插件catbaron.voice_recog配置`ehforwarderbot/profiles/default/catbaron.voice_recog/config.yaml`
+    使用api实现语音转文字功能，目前支持配置如下:
 
-   使用api实现语音转文字功能，目前支持配置如下:
+    ```yml
+    speech_api:
+        baidu:
+            api_key: API_KEY
+            secret_key: SECRET_KEY
+            # supported language:
+            #   zh, zh-x-en, en, zh-yue, zh-x-sichuan, zh-x-farfield
+            lang: zh
+        azure:
+            key1: KEY_1
+            endpoint: ENDPOINT
+            # supported language:
+            #   ar-EG, ar-SA, ar-AE, ar-KW, ar-QA, ca-ES,
+            #   da-DK, de-DE, en-AU, en-CA, en-GB, en-IN,
+            #   en-NZ, en-US, es-ES, es-MX, fi-FI, fr-CA,
+            #   fr-FR, gu-IN, hi-IN, it-IT, ja-JP, ko-KR,
+            #   mr-IN, nb-NO, nl-NL, pl-PL, pt-BR, pt-PT,
+            #   ru-RU, sv-SE, ta-IN, te-IN, zh-CN, zh-HK,
+            #   zh-TW, th-TH, tr-TR
+            lang: zh
+        tencent:
+            secret_id: SECRET_ID
+            secret_key: SECRET_KEY
+            # supported language: en, zh
+            lang: en
+        iflytek:
+            app_id: APP_ID
+            api_secret: API_SECRET
+            api_key: APP_KEY
+            # supported language: zh, en
+            lang: en
+    auto: true
+    ```
 
-   ```
-   speech_api:
-       baidu:
-           api_key: API_KEY
-           secret_key: SECRET_KEY
-           # supported language:
-           #   zh, zh-x-en, en, zh-yue, zh-x-sichuan, zh-x-farfield
-           lang: zh
-       azure:
-           key1: KEY_1
-           endpoint: ENDPOINT
-           # supported language:
-           #   ar-EG, ar-SA, ar-AE, ar-KW, ar-QA, ca-ES,
-           #   da-DK, de-DE, en-AU, en-CA, en-GB, en-IN,
-           #   en-NZ, en-US, es-ES, es-MX, fi-FI, fr-CA,
-           #   fr-FR, gu-IN, hi-IN, it-IT, ja-JP, ko-KR,
-           #   mr-IN, nb-NO, nl-NL, pl-PL, pt-BR, pt-PT,
-           #   ru-RU, sv-SE, ta-IN, te-IN, zh-CN, zh-HK,
-           #   zh-TW, th-TH, tr-TR
-           lang: zh
-       tencent:
-           secret_id: SECRET_ID
-           secret_key: SECRET_KEY
-           # supported language: en, zh
-           lang: en
-       iflytek:
-           app_id: APP_ID
-           api_secret: API_SECRET
-           api_key: APP_KEY
-           # supported language: zh, en
-           lang: en
-   auto: true
-   ```
+    建议保留一个使用即可
 
-   建议保留一个使用即可
+4. 插件 `patch.PatchMiddleware` 配置文件 `efb-update/profiles/default/patch.PatchMiddleware/config.yaml`
 
-4. 插件patch.PatchMiddleware配置`ehforwarderbot/profiles/default/patch.PatchMiddleware/config.yaml`
+    - 配置文件内容
 
-   1.创建群组等信息存储数据库tg_group.db
-
-   ``` touch patch.PatchMiddleware/tg_group.db```
-
-   2.配置文件内容
-
-   ``````
-   auto_mark_as_read: True # auto mark as read in wechat phone client
-   remove_emoji_in_title: True # wouldn't remove emoji in telegram group title if this is set False
-   ``````
-
-注：
-
-1.所有插件的目录及配置文件位置均在`/root/.ehforwarderbot/profiles/default/……`中，`ehforwarderbot/profiles/default`中为存放，不放心的可以两边都更新
-
-在路径`ehforwarderbot/profiles/default`下使用全部复制命令`cp -r * /root/.ehforwarderbot/profiles/default`
-
-2.所有新增插件需要在`Dockerfile`构建文件中添加pip安装依赖包，本文所述依赖已配置efb-voice_recog-middleware efb-patch-middleware
+    ```yml
+    auto_mark_as_read: True # 手机微信自动标记已读
+    remove_emoji_in_title: True # 移除 Telegram 群组名称中的 emoji
+    ```
 
 ## 部署
 
-```console
-构建镜像efb
-docker build ehforwarderbot/ -t efb
-删除容器efb
-docker rm -f efb >/dev/null 2>&1 && docker run -d --name=efb --restart=always -v $PWD/ehforwarderbot/:/data/ efb
-(容器和镜像同名，是为了方便快速删除和启动，减少image id 和 container id的查找和使用)
+本地构建：
+
+```shell
+# 构建镜像efb
+docker build efb-update/ -t efb
+# 删除容器efb
+docker rm -f efb >/dev/null 2>&1 && docker run -d --name=efb --restart=always -v $PWD/profiles:/data/profiles efb
+# 容器和镜像同名，是为了方便快速删除和启动，减少 image id 和 container id的查找和使用
+```
+
+直接使用：
+
+```shell
+git clone https://github.com/wbbk/efb-update efb-update
+cd efb-update
+# 参考上文，编辑好配置文件
+docker compose up -d
 ```
 
 ## 参考文章
