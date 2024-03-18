@@ -14,7 +14,7 @@ RUN apk add --no-cache tzdata ca-certificates ffmpeg libmagic \
   pip install --root-user-action=ignore pysocks ehforwarderbot efb-telegram-master efb-voice_recog-middleware efb-patch-middleware && \
   cp /usr/share/zoneinfo/${TZ} /etc/localtime && \
   apk del .build-deps && \
-  apk del tzdata
+  apk del tzdata && \
   rm -rf /var/cache/apk/*
 RUN pip install --root-user-action=ignore git+https://github.com/ehForwarderBot/efb-wechat-slave.git
 
