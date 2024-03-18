@@ -16,4 +16,4 @@ services:
     image: example/efb-wechat
     network_mode: bridge
     volumes:
-      - ./profiles:/data/profiles:ro
+      - ./profiles:/data/profiles
