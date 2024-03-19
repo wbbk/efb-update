@@ -19,7 +19,6 @@ RUN apk add --no-cache --virtual .build-deps git build-base libffi-dev && \
   pip install --root-user-action=ignore git+https://github.com/ehForwarderBot/efb-wechat-slave.git && \
   pip install --root-user-action=ignore efb-voice_recog-middleware efb-patch-middleware && \
   apk del .build-deps && \
-  rm -rf /var/cache/apk/* && \
-  chmod +x /entrypoint.sh
+  rm -rf /var/cache/apk/*
 
 ENTRYPOINT ["/entrypoint.sh"]
