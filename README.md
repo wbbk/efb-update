@@ -1,73 +1,41 @@
 # ehforwarderbot
 
-## 安装
+> **原始作者文章仓库地址 [jiz4oh/ehforwarderbot](https://github.com/jiz4oh/ehforwarderbot)**，本文在此仓库基础之上新增两个插件，并补充了使用文档。
+
+## 0. 克隆仓库
 
 ```shell
 git clone https://github.com/wbbk/efb-update efb-update
 ```
 
-## 配置
+## 1. 编辑配置文件
 
-1.  主配置文件 `efb-update/profiles/default/blueset.telegram/config.yaml`
-    1. telgram 提供的 bot `token`
-    2. telgram 提供的 telgram id `admins`
+1. 主配置文件 `efb-update/profiles/default/config.yaml`
+    - `middlewares` 定义了启用的转发通道和中间件
+        - `catbaron.voice_recog` 语音转文字
+        - `patch.PatchMiddleware` 手机微信标记已读
+        - 默认启用两个插件，如果不需要某个插件，删除或注释对应的行即可
+        - 如果两个都不需要，可以直接删除或注释 `middlewares` 小节
 
-2.  （可选）插件控制配置文件`efb-update/profiles/default/config.yaml`
-    1. 新增插件 catbaron.voice_recog，实现语音转文字；
-    2. 新增插件 patch.PatchMiddleware，实现标记微信已读
+2. Telegram 配置 `efb-update/profiles/default/blueset.telegram/config.yaml`
+    - `token` Telegram 的 bot token
+    - `admins` Telegram 账号的数字 ID
+    - 详情可参考 [efb-wechat-docker 绑定过程记录 | HE-SB-技术栈](https://tech.he-sb.top/posts/usage-of-efbwechat-docker/)
 
-3. 插件 `catbaron.voice_recog` 配置文件 `ehforwarderbot/profiles/default/catbaron.voice_recog/config.yaml`
+3. wechat 配置 `efb-update/profiles/default/blueset.wechat/config.yaml`
+    - 可用的配置及含义参考插件仓库： [ehForwarderBot/efb-wechat-slave](https://github.com/ehForwarderBot/efb-wechat-slave?tab=readme-ov-file#%E5%AE%9E%E9%AA%8C%E5%8A%9F%E8%83%BD)
 
-    使用api实现语音转文字功能，目前支持配置如下:
+4. 插件 `catbaron.voice_recog` 配置 `efb-update/profiles/default/catbaron.voice_recog/config.yaml`
+    - 配置方法参考插件仓库： [catbaron0/efb-voice_recog-middleware](https://github.com/catbaron0/efb-voice_recog-middleware)
 
-    ```yml
-    speech_api:
-        baidu:
-            api_key: API_KEY
-            secret_key: SECRET_KEY
-            # supported language:
-            #   zh, zh-x-en, en, zh-yue, zh-x-sichuan, zh-x-farfield
-            lang: zh
-        azure:
-            key1: KEY_1
-            endpoint: ENDPOINT
-            # supported language:
-            #   ar-EG, ar-SA, ar-AE, ar-KW, ar-QA, ca-ES,
-            #   da-DK, de-DE, en-AU, en-CA, en-GB, en-IN,
-            #   en-NZ, en-US, es-ES, es-MX, fi-FI, fr-CA,
-            #   fr-FR, gu-IN, hi-IN, it-IT, ja-JP, ko-KR,
-            #   mr-IN, nb-NO, nl-NL, pl-PL, pt-BR, pt-PT,
-            #   ru-RU, sv-SE, ta-IN, te-IN, zh-CN, zh-HK,
-            #   zh-TW, th-TH, tr-TR
-            lang: zh
-        tencent:
-            secret_id: SECRET_ID
-            secret_key: SECRET_KEY
-            # supported language: en, zh
-            lang: en
-        iflytek:
-            app_id: APP_ID
-            api_secret: API_SECRET
-            api_key: APP_KEY
-            # supported language: zh, en
-            lang: en
-    auto: true
-    ```
+5. 插件 `patch.PatchMiddleware` 配置 `efb-update/profiles/default/patch.PatchMiddleware/config.yaml`
+    - `auto_mark_as_read` 是否自动在手机微信标记已读
+    - `remove_emoji_in_title` 是否移除 Telegram 群组名称中的 emoji
+    - 其他可用配置参考插件仓库： [ehForwarderBot/efb-patch-middleware](https://github.com/ehForwarderBot/efb-patch-middleware)
 
-    建议保留一个使用即可
+## 2. 启动容器
 
-4. 插件 `patch.PatchMiddleware` 配置文件 `efb-update/profiles/default/patch.PatchMiddleware/config.yaml`
-
-    - 配置文件内容
-
-    ```yml
-    auto_mark_as_read: True # 手机微信自动标记已读
-    remove_emoji_in_title: True # 移除 Telegram 群组名称中的 emoji
-    ```
-
-## 部署
-
-本地构建：
+### 本地构建后启动
 
 ```shell
 # 构建镜像efb
@@ -77,7 +45,7 @@ docker rm -f efb >/dev/null 2>&1 && docker run -d --name=efb --restart=always -v
 # 容器和镜像同名，是为了方便快速删除和启动，减少 image id 和 container id的查找和使用
 ```
 
-直接使用：
+### 直接使用
 
 ```shell
 git clone https://github.com/wbbk/efb-update efb-update
@@ -86,67 +54,26 @@ cd efb-update
 docker compose up -d
 ```
 
-## 参考文章
+## 3. 备份和迁移
 
-原始作者文章仓库地址[jiz4oh/ehforwarderbot](https://github.com/jiz4oh/ehforwarderbot)，本文在此仓库基础之上进行了插件安装，并补充使用文档（原始工具的配置文件有些零散，且有些功能已失效）
+容器内所有数据都在 `efb-update/profiles` 路径下，更换机器部署或重建容器时，只需备份这个文件夹，然后挂载进新的容器即可（可参考 `docker-compose.yml` 文件中的挂载方式）。
 
-[语音转文字插件使用配置](https://github.com/catbaron0/efb-voice_recog-middleware)
+---
 
-[增强 EFB 功能的补丁](https://github.com/ehForwarderBot/efb-patch-middleware)
+## 4. 参考文章
 
-[blueset.wechat配置文件配置](https://github.com/ehForwarderBot/efb-wechat-slave?tab=readme-ov-file#实验功能)
-
-[可用插件参考地址](https://github.com/ehForwarderBot/ehForwarderBot/wiki/Modules-Repository)（上述插件仅验证部分，并已集成到代码中，其余插件请自行验证可用性）
-
-[ehForwarderBot 遇到的那些坑](https://blog.shzxm.com/2020/12/31/efb/)（作者为系统直接部署非打包docker镜像，可参考相关配置和解释）
-
-## 写在结尾
-
-本文默认省略bot创建，token生成，菜单指令绑定等操作，后续补充，有疑问的可以参考这个文章
-
-[zhangyile/telegram-wechat: 使用 telegram 收发微信 ](https://github.com/zhangyile/telegram-wechat)
-
-
-
-efb项目的原理是这样的：
-Telegram bot > EFB > 微信网页版 > 微信
-
-使用 itchat-uos 替换了 itchat
-
-- itchat-uos: https://github.com/why2lyj/ItChat-UOS
-- itchat: https://github.com/littlecodersh/ItChat
-
-## 环境依赖
-
-- 一个正常使用的 Telegram 账号
-- 一个正常使用的微信号 （微信号需实名并绑有银行卡，否则无法登录 UOS 网页版微信）
-- docker / docker compose （本文以 docker compose 为例，怎么安装，自己网上找教程）
-- 一台 Linux 服务器 （需与 api.telegram.org 能通信）
-
-## Telegram 上创建机器人并获取 Token 和 ID
-
-### 获取 Bot Token
-
-1. 在 Telegram 里, 对 @botfather 说话: /newbot
-2. 按照要求给 Bot 取名
-3. 获取 Bot Token安全原因: Token 必须保密（这串token要记好，待会要用）
-4. 允许 Bot 读取非指令信息，对 @botfather 说话: /setprivacy, 选择disable
-5. 允许将 Bot 添加进群组，对 @botfather 说话: /setjoingroups, 选择enable
-6. 允许 Bot 提供指令列表，对 @botfather 说话: /setcommands, 输入以下内容 （复制以下内容一次性发给botfather）
-
-```
-help - 显示命令列表.
-link - 将远程会话绑定到 Telegram 群组
-chat - 生成会话头
-recog - 回复语音消息以进行识别
-info - 显示当前 Telegram 聊天的信息.
-unlink_all - 将所有远程会话从 Telegram 群组解绑.
-update_info - 更新群组名称和头像
-extra - 获取更多功能
-```
-
-### 获取 Telegram 账户 ID
-
-再和另外一个机器人 @get_id_bot 对话（也是搜索得到这个机器人），点击 start 即可获得你的 Telegram ID，一串数字（Chat ID）。
-
-至此，Telegram 的配置完成，我们得到两个重要的数字：token、Telegram ID
+1. [jiz4oh/ehforwarderbot](https://github.com/jiz4oh/ehforwarderbot)
+    - 本镜像原始作者仓库，huge thx！
+2. [catbaron0/efb-voice_recog-middleware](https://github.com/catbaron0/efb-voice_recog-middleware)
+    - 语音转文字插件仓库
+3. [ehForwarderBot/efb-patch-middleware](https://github.com/ehForwarderBot/efb-patch-middleware)
+    - EFB 补丁插件仓库
+4. [ehForwarderBot/efb-wechat-slave](https://github.com/ehForwarderBot/efb-wechat-slave)
+    - 微信通道仓库
+5. [Modules Repository · ehForwarderBot/ehForwarderBot Wiki](https://github.com/ehForwarderBot/ehForwarderBot/wiki/Modules-Repository)
+    - 官方 wiki，收录了可用的其他插件
+    - 其中插件仅验证部分，并已集成到镜像中，其余插件请自行验证可用性
+6. [ehForwarderBot 遇到的那些坑 | 松鼠窝](https://blog.shzxm.com/2020/12/31/efb/)
+    - 作者为系统直接部署非打包docker镜像，但可参考相关配置和解释
+7. [zhangyile/telegram-wechat: 使用 telegram 收发微信](https://github.com/zhangyile/telegram-wechat)
+8. [efb-wechat-docker 绑定过程记录 | HE-SB-技术栈](https://tech.he-sb.top/posts/usage-of-efbwechat-docker/)

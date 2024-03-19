@@ -1,2 +1,2 @@
-auto_mark_as_read: True # auto mark as read in wechat phone client
-remove_emoji_in_title: True # wouldn't remove emoji in telegram group title if this is set False
+auto_mark_as_read: True # 自动在手机微信标记已读
+remove_emoji_in_title: True # 自动移除 Telegram 群组名称中的 emoji
