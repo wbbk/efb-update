@@ -7,17 +7,19 @@ ENV EFB_PARAMS ""
 ENV EFB_PROFILE "default"
 ENV HTTPS_PROXY ""
 
+COPY entrypoint.sh /entrypoint.sh
+
 RUN apk add --no-cache ffmpeg libmagic tiff openjpeg cairo \
   py3-olefile py3-numpy py3-cryptography py3-decorator && \
   cp /usr/share/zoneinfo/${TZ} /etc/localtime && \
   apk del tzdata
+
 RUN apk add --no-cache --virtual .build-deps git build-base libffi-dev && \
   pip install --root-user-action=ignore pysocks ehforwarderbot efb-telegram-master[tgs] && \
   pip install --root-user-action=ignore git+https://github.com/ehForwarderBot/efb-wechat-slave.git && \
   pip install --root-user-action=ignore efb-voice_recog-middleware efb-patch-middleware && \
   apk del .build-deps && \
-  rm -rf /var/cache/apk/*
-
-COPY entrypoint.sh /entrypoint.sh
+  rm -rf /var/cache/apk/* && \
+  chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
