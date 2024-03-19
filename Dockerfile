@@ -8,7 +8,7 @@ ENV EFB_PROFILE "default"
 ENV HTTPS_PROXY ""
 
 RUN apk add --no-cache ffmpeg libmagic tiff openjpeg cairo \
-  py3-olefile py3-numpy py3-pillow py3-cryptography py3-decorator && \
+  py3-olefile py3-numpy py3-cryptography py3-decorator && \
   cp /usr/share/zoneinfo/${TZ} /etc/localtime && \
   apk del tzdata
 RUN apk add --no-cache --virtual .build-deps git build-base && \
