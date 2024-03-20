@@ -1,6 +1,6 @@
 # ehforwarderbot
 
-> **原始作者文章仓库地址 [jiz4oh/ehforwarderbot](https://github.com/jiz4oh/ehforwarderbot)**，本文在此仓库基础之上新增两个插件，并补充了使用文档。
+> **原始作者仓库地址 [jiz4oh/ehforwarderbot](https://github.com/jiz4oh/ehforwarderbot)**，本文在此仓库基础之上新增两个插件，并补充了使用文档。
 
 ## 0. 克隆仓库
 
